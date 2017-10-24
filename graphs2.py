@@ -22,13 +22,17 @@ from pq import PQ
 #    -- return that Digraph object
 def generateRandomWeightedDigraph(v,e,minW,maxW) :
     import random
-##    v = [random.randint(0,10) for x in range (0,9)]
-    G = nx.random_graphs.gnp_random_graph(v,e) 
-    m = G.number_of_edges()
-    weights = [random.randint(minW,maxW) for r in range(m)]
-    unweighted_edges = G.edges()
-    weighted_edges = [(unweighted_edges[i][0], unweighted_edges[i][1], {'weight':weights[i]}) for i in range(m)]
-    return nx.Graph(weighted_edges)
+    randEdges =[]
+    randWeight =[]
+    for i in range(e):
+        vertex1 = random.randint(0, v-1)
+        vertex2 = random.randint(0, v-1)
+        while(vertex1 == vertex2 or (vertex1, vertex2) in randEdges):
+             vertex1 = random.randint(0, v-1)
+             vertex2 = random.randint(0, v-1)
+        randEdges.append((vertex1, vertex2))
+        randWeight.append(random.randint(minw,maxW))
+    return Digraph(v, randEdges, randWeight)
 
 # Programming Assignment 3
 #
