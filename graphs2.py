@@ -270,12 +270,44 @@ class Digraph(Graph) :
     #                   call DFS passing a function that adds the vertex index to the front of a list.
     #               C) Option C: any other way you can come up with that doesn't change what DFS currently does logically 
     def topologicalSort(self) :
-        pass
+        class VertexData :
+            pass
+        vertices = [VertexData() for i in range(len(self._adj))]
+        for i in range(len(vertices)) :
+            vertices[i].d = 0
+            vertices[i].pred = -1
+        topoSort = deque()
+        time = 0
+        def visit(self,u) :
+            nonlocal time
+            nonlocal vertices
+            time = time + 1
+            vertices[u].d = time
+            for v in self._adj[u] :
+                if vertices[v].d == 0 :
+                    vertices[v].pred = u
+                    visit(self,v)
+            time = time + 1
+            vertices[u].f = time
+            topoSort.appendleft(u)
+            
+        for u in range(len(vertices)) :
+            if vertices[u].d == 0 :
+                visit(self,u)
+        #return vertices
+        return list(deque(topoSort))
 
     # Computes the transpose of a directed graph. (See textbook page 616 for description of transpose).
     # Does not alter the self object.  Returns a new Digraph that is the transpose of self.
     def transpose(self) :
-        pass
+        transList = []
+        for i in range(len(self._adj)) :
+            L = self._adj[i]
+            for j in range(len(L)) :
+                transList.append((L[j],i))
+        transG = Digraph(len(self._adj), transList)
+        return transG.printGraph()
+
 
     # Computes the strongly connected components of a digraph.
     # Returns a list of lists, containing one list for each strongly connected component, which is simply
@@ -293,7 +325,39 @@ class Digraph(Graph) :
     #               You'll need to then alter it to have the outer loop use the vertex ordering obtained from algorithm line 1 (to implement line 3).
     #               And to do line 4, you'll need to further alter it to generate the list of lists for the return value.
     def stronglyConnectedComponents(self) :
-        pass
+        topoVertices = self.topologicalSort()
+        transGraph = self.transpose()
+        list1 = []
+        tempList =[]
+        class VertexData :
+            pass
+        vertices = [VertexData() for i in range(len(self._adj))]
+        for i in range(len(vertices)) :
+            vertices[i].d = 0
+            vertices[i].pred = -1
+        time = 0
+        
+        def visit(transGraph,u) :
+            nonlocal time
+            nonlocal vertices
+            time = time + 1
+            vertices[u].d = time
+            tempList.append(u)
+            
+            for v in self._adj[u] :
+                if vertices[v].d == 0 :
+                    vertices[v].pred = u
+                    visit(self,v)
+            time = time + 1
+            vertices[u].f = time
+            
+        for u in topoVertices:
+            u = topoVertices.pop()
+            if vertices[u].d == 0:
+                visit(transGraph, u)
+                list1.append(tempList)
+                tempList = []
+        return list1
 
 
 
