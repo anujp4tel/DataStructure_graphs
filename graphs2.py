@@ -227,12 +227,34 @@ class Digraph(Graph) :
     #    the parameter s is the source vertex.
     def DijkstrasVersion1(self,s) :
         S = set()
-        delta = dict.fromkeys(list(self.v), math.inf)
-        previous = dict.fromkeys(list(self.v), None)
+        TL = []
+        class VertexData :
+            pass
+        vertices = [VertexData() for i in range(len(self._adj))]
+        for i in range(len(vertices)) :
+            vertices[i].d = inf
+            vertices[i].pred = -1
+            S.add(i)
+        vertices[s].d = 0
+        vertices[s].pred = -1
+        while S :
+            u = -1
+            for i in S:
+                if u is -1:
+                    u = i
+                elif vertices[i].d < vertices[u].d:
+                        u = i
+            if u is -1:
+                break
+            S.pop()
+            TL.append((u, vertices[u].d, vertices[u].pred))
+            for i in self._adj[u]:
+                distance = vertices[u].d + self._w[(u,i)]
+                if(distance < vertices[i].d):
+                    vertices[i].d = distance
+                    vertices[i].pred = u
+        return TL
 
-        delta[start] = 0
-        while s !=self.v:
-            v
 
 
     # Programminf Assignment 3:
@@ -247,7 +269,29 @@ class Digraph(Graph) :
     #
     #    the parameter s is the source vertex.
     def DijkstrasVersion2(self,s) :
-        pass
+        S = PQ()
+        TL = []
+        class VertexData :
+            pass
+        vertices = [VertexData() for i in range(len(self._adj))]
+        for i in range(len(vertices)) :
+            vertices[i].d = inf
+            vertices[i].pred = -1
+            S.add(i, vertices[i].d)
+        vertices[s].d = 0
+        vertices[s].pred = -1
+        while not S.is_empty() :
+            u = S.extract_min()
+            
+            TL.append((u, vertices[u].d, vertices[u].pred))
+            for i in self._adj[u]:
+                distance = vertices[u].d + self._w[(u,i)]
+                if(distance < vertices[i].d):
+                    vertices[i].d = distance
+                    vertices[i].pred = u
+                    S.change_priority(i, distance)
+        return TL
+    
     
 
     # Topological Sort of the directed graph (Section 22.4 from textbook).
