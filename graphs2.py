@@ -8,6 +8,9 @@ from pq import PQ
 #     Given the output of step 4, how do the 2 versions of Dijkstra's algorithm compare?
 #     How does graph density affect performance?  Does size of the graph otherwise affect performance?
 #     Any other observations?
+#   Dijkstra Version 2 seem to take more time then Dijkstra Version 1
+#   Greater the graph density and size the more time it takes to execue each version of dijkstra method
+
 
 
 # Programming Assignment 3
@@ -55,8 +58,91 @@ def generateRandomWeightedDigraph(v,e,minW,maxW) :
 #     -- If you want, you can include larger digraphs.  The pattern I used when indicating what size to use: Dense graphs: v, e=v*(v-1),
 #        Sparse: v, e=2*v, and Something in the middle: v, e=v*(v-1)/lg V.
 def timeShortestPathAlgs() :
-    pass
-
+     def alg ():
+        time1 = timeit.timeit(lambda: G5.DijkstrasVersion1(0), number =1000)
+        return time1
+    def alg2 ():
+        time2 = timeit.timeit(lambda: G5.DijkstrasVersion2(0), number =1000)
+        return time2
+    if __name__ == "__main__":
+        #16 vertices and 240 edges
+        version1 = []
+        version2 = []
+        G5 = generateRandomWeightedDigraph(16, 240, 1, 10)
+        dij1 = alg()
+        dij2 = alg2 ()
+        version1.append(dij1)
+        version2.append(dij2)
+        print("Graph\tVertices\tEdges")
+        print("G5\t16\t\t240")
+        print('Version 1:', dij1)
+        print('Version 2:', dij2)
+        print()
+        #64 vertices and 4032 edges
+        version1 = []
+        version2 = []
+        G5 = generateRandomWeightedDigraph(64, 4032, 1, 10)
+        dij1 = alg()
+        dij2 = alg2 ()
+        version1.append(dij1)
+        version2.append(dij2)
+        print("Graph\tVertices\tEdges")
+        print("G5\t64\t\t4032")
+        print('Version 1:', dij1)
+        print('Version 2:', dij2)
+        print()
+        #16 vertices and 60 edges
+        version1 = []
+        version2 = []
+        G5 = generateRandomWeightedDigraph(16, 60, 1, 10)
+        dij1 = alg()
+        dij2 = alg2 ()
+        version1.append(dij1)
+        version2.append(dij2)
+        print("Graph\tVertices\tEdges")
+        print("G5\t16\t\t60")
+        print('Version 1:', dij1)
+        print('Version 2:', dij2)
+        print()
+        #64 vertices and 672 edges
+        version1 = []
+        version2 = []
+        G5 = generateRandomWeightedDigraph(64, 672, 1, 10)
+        dij1 = alg()
+        dij2 = alg2 ()
+        version1.append(dij1)
+        version2.append(dij2)
+        print("Graph\tVertices\tEdges")
+        print("G5\t64\t\t672")
+        print('Version 1:', dij1)
+        print('Version 2:', dij2)
+        print()
+        #16 vertices and 32 edges
+        version1 = []
+        version2 = []
+        G5 = generateRandomWeightedDigraph(16, 32, 1, 10)
+        dij1 = alg()
+        dij2 = alg2 ()
+        version1.append(dij1)
+        version2.append(dij2)
+        print("Graph\tVertices\tEdges")
+        print("G5\t16\t\t32")
+        print('Version 1:', dij1)
+        print('Version 2:', dij2)
+        print()
+        #64 vertices and 128 edges
+        version1 = []
+        version2 = []
+        G5 = generateRandomWeightedDigraph(64, 128, 1, 10)
+        dij1 = alg()
+        dij2 = alg2 ()
+        version1.append(dij1)
+        version2.append(dij2)
+        print("Graph\tVertices\tEdges")
+        print("G5\t64\t\t128")
+        print('Version 1:', dij1)
+        print('Version 2:', dij2)
+        print()
 
 # Undirected graph as adjacency lists
 class Graph :
