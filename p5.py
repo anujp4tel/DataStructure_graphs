@@ -67,11 +67,11 @@ def time_results() :
         short_stories = alg(G, H)
         short_stories1 = alg2(G, H)
         
-        print('{:^15} {:^35} {:^20}'.format("String Length","Sequential Time","Parallel Time"))
-        print('{:^15} {:^35} {:^20}'.format(len(A), num, num1))
-        print('{:^15} {:^35} {:^20}'.format(len(A), tongue_twisters, tongue_twisters1))
-        print('{:^15} {:^35} {:^20}'.format(len(A), tongue_twisters3, tongue_twisters4))
-        print('{:^15} {:^35} {:^20}'.format(len(A), short_stories, short_stories1))
+        print('{:^15} {:^15} {:^35} {:^20}'.format("Text Length", "Pattern Length", "Sequential Time","Parallel Time"))
+        print('{:^15} {:^15} {:^35} {:^20}'.format(len(A), len(B), num, num1))
+        print('{:^15} {:^15} {:^35} {:^20}'.format(len(C), len(D), tongue_twisters, tongue_twisters1))
+        print('{:^15} {:^15} {:^35} {:^20}'.format(len(E), len(F), tongue_twisters3, tongue_twisters4))
+        print('{:^15} {:^15} {:^35} {:^20}'.format(len(G), len(H), short_stories, short_stories1))
 
         
 
