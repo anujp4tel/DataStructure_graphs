@@ -24,17 +24,29 @@
 #    Q1: After running time_results, fill in this table in this comment for whatever P and T lengths
 #        you tried (make sure you vary lengths from short to longer:
 #        T-length   P-Length   Sequential   Parallel
+#    Text Length   Pattern Length            Sequential Time              Parallel Time    
+#      240              6                0.2084958848378804          0.0002615309675206845
+#      240              5                0.20636729140436216         0.00025481491548262625
+#      124              4                0.21266299759525964         0.00012325930795498152
+#      86               3                0.2066742544885969          8.651855269903308e-05
+#     5133              3                0.22244947059732212         0.0029720505568597844
+#     5133              2                0.21420294882091895         0.004339359739006454
 #
 #    Q2: How do the times (of both versions) vary by string length?  If T is held constant, and pattern P length varied, how does
 #        that affect runtime?  If P length is held constant, and text T length varied, how does that affect runtimes?
+#       T-Constant + P-Varied = Parallel Time > Sequential Time | Smaller P-varied = decreases in Parallel/Sequential Time
+#       T-varied + P-Constant = Parallel Time > Sequential TIme | Larger T-vaired = increase in Parallel/Sequential Time
 #
 #    Q3: At what lengths of P and/or T is the sequential version faster?
+#       Smaller P and T length = sequential version faster       
 #
 #    Q4: At what lengths of P and/or T is the parallel version faster?
+#       Larger P and T length = Parallel version faster
 #
 #    Q5: Are the results consistent with the speedup you computed in Problem Set 4?  If not, what do you think caused
 #        the inconsistency with the theoretical speedup?
-
+#       Not Consistent: On paper it's supposed to be liear P but everytime you add processor it slows down parallel Time
+#
 
 # These are imports you will likely need.  Feel free to add any other imports that are necessary.
 #E.g., you might also need Queue for getting the results back from your processes.
@@ -42,38 +54,45 @@ from multiprocessing import Process, Array,Pool
 import multiprocessing as mp
 from functools import partial
 import timeit
+import ctypes
 
 
 def time_results() :
     """Write any code needed to compare the timing of the sequential and parallel versions
     with a variety of string lengths."""
     def alg (T, P):
-        time1 = timeit.timeit(lambda: p_naive_string_matcher(T,P), number =1000)
+        time1 = timeit.timeit(lambda: p_naive_string_matcher(T,P), number =1)
         return time1
     def alg2 (T, P):
-        time2 = timeit.timeit(lambda: naive_string_matcher(T,P), number =1000)
+        time2 = timeit.timeit(lambda: naive_string_matcher(T,P), number =1)
         return time2
     if __name__ == "__main__":
         # string with numbers
         num = alg(A,B)
         num1 = alg2(A,B)
+        # string with numbers
+        num2 = alg(A,X)
+        num3 = alg2(A,X)
         #tounge-twister
         tongue_twisters = alg(C,D)
         tongue_twisters1 = alg2(C,D)
         #tounge-twister
-        tongue twisters3 = alg(E,F)
-        tongue twister4 = alg2(E,F)
+        tongue_twisters3 = alg(E,F)
+        tongue_twisters4 = alg2(E,F)
         #short-stories
         short_stories = alg(G, H)
         short_stories1 = alg2(G, H)
+        #short-stories
+        short_stories2 = alg(G, I)
+        short_stories3 = alg2(G, I)
         
         print('{:^15} {:^15} {:^35} {:^20}'.format("Text Length", "Pattern Length", "Sequential Time","Parallel Time"))
         print('{:^15} {:^15} {:^35} {:^20}'.format(len(A), len(B), num, num1))
+        print('{:^15} {:^15} {:^35} {:^20}'.format(len(A), len(X), num2, num3))
         print('{:^15} {:^15} {:^35} {:^20}'.format(len(C), len(D), tongue_twisters, tongue_twisters1))
         print('{:^15} {:^15} {:^35} {:^20}'.format(len(E), len(F), tongue_twisters3, tongue_twisters4))
         print('{:^15} {:^15} {:^35} {:^20}'.format(len(G), len(H), short_stories, short_stories1))
-
-        
+        print('{:^15} {:^15} {:^35} {:^20}'.format(len(G), len(I), short_stories2, short_stories3))
 
 def print_results(L) :
     """Prints the list of indices for the matches."""
@@ -152,46 +171,44 @@ def p_naive_string_matcher(T, P) :
     T -- the text string to search for patterns.
     P -- the pattern string.
     """
-    L = [i for i in range(0, n-m+1)]
+    
     n = len(T)
     m = len(P)
+    L = [i for i in range(0, n-m+1)]
     pool = mp.Pool()
-    func = partial(p_help, T,P,m)
-    matches = [x for x in pool.map(func, iterable) if x is not None]
-    return matches
+    part = partial(p_help, T,P,m)
+    matchedPattern = [x for x in pool.map(part, L) if x is not None]
+    return matchedPattern
 
-def p_hlep(T,P,m,i):
+def p_help(T,P,m,i):
     if P == T[i:i+m]:
         return i
 
 A = "001111010101101001100011010111101101011101101110010010101010111110111101100001011011000010111111011110011000011111000100100101001011101110101101111010100110010100101110010000111111100100110111010110100110011011101001010010101000010100111110"
 B = "110011"
+X = "01101"
 
 C = "I wish to wish the wish you wish to wish, but if you wish the wish the witch wishes, I won't wish the wish you wish to wish."
 D = "wish"
 
 E = "One-one was a race horse.Two-two was one too.One-one won one race.Two-two won one too."
-F - "one"
+F = "one"
 
 G = """The sun did not shine.
 It was too wet to play.
 So she sat in the house
 All that cold, cold, wet day.
-
 She just sat in a chair
 All alone, by herself.
 As she watched the paint dry
 On her brand new bookshelf.
-
 Too wet to go out
 And too cold to play ball.
 As she sat in the house,
 And did nothing at all.
-
 And then
 Something went BUMP!
 How that bump made her jump!
-
 She looked!
 Then she saw him step in on that mat!
 She looked!
@@ -199,12 +216,10 @@ And she saw him!
 The Cat in the Hat!
 And he said to her,
 “Why do you sit there like that?”
-
 “I know it is wet
 And the sun is not sunny.
 But we can have
 Lots of good fun that is funny!”
-
 “I know some good games we could play,”
 Said the cat.
 “I know some good tricks,”
@@ -213,12 +228,10 @@ Said the Cat in the Hat.
 I will show them to you.
 Your mother
 Will not mind at all if I do.”
-
 She sat there and she
 Did not know what to say.
 Her mother was out of the house
 For the day.
-
 But her fish said, “No! No!
 Make that cat go away!
 Tell that Cat in the Hat
@@ -227,7 +240,6 @@ He should not be here.
 He should not be about.
 He should not be here
 When your mother is out!”
-
 “Now! Now! Have no fear.
 Have no fear!” said the cat.
 “My tricks are not bad,”
@@ -236,12 +248,10 @@ Said the Cat in the Hat.
 Lots of good fun, if you wish,
 With a game that I call
 Let’s get rid of the fish!”
-
 Then the cat chased the fish
 Until she was caught.
 And the fish hit the Cat in the head
 With a pot.
-
 “STOP!” Yelled the girl
 “You do not have to fight
 Either leave her alone or
@@ -249,17 +259,14 @@ you’re leaving!” “Alright”
 Said the cat. “I’ll let the fish be.
 Besides, there is something
 I want you to see.”
-
 And then he ran out.
 And, then, fast as a whirl,
 The Cat in the Hat
 Came back in with a girl.
-
 She was a cute girl
 With eyes that shone bright.
 With a sweatshirt and jeans
 And teeth that shone white
-
 Then he introduced her
 With a tip of his hat.
 “Here’s someone I’d like you to meet,”
@@ -268,7 +275,6 @@ Said the cat.
 I will show to you now”
 And the girl gave a twirl.
 As the cat took a bow.
-
 “Here’s a sweet little girl
 And she wants to play
 She can bring you some fun
@@ -277,7 +283,6 @@ She is just like you are,
 And I call her Thing One.
 Would you like to shake hands
 I’m sure you’ll have fun”
-
 She was so bored and
 She needed some fun.
 So she went to shake hands
@@ -286,12 +291,10 @@ And as they shook hands.
 Her poor fish said, “No! No!
 These two should not be
 In the house! Make them go!
-
 “They should not be here
 When your mother is not!
 Put them out! Put them out!”
 Said the fish with the pot.
-
 “Have no fear little fish,”
 Said the Cat in the Hat.
 “For she’s a good Thing.”
@@ -300,12 +303,10 @@ And he gave her a pat.
 She has come here to play.
 She will give you some fun
 On this wet, wet, wet day.”
-
 “Now why don’t you two go and play,”
 Said the cat.
 “Just be on your way”
 Said the Cat in the Hat.
-
 “No! No do not go!”
 Said the fish with the pot.
 “Do not leave me alone
@@ -314,14 +315,12 @@ Oh, I do not like cats!
 They scare me, I admit!
 Oh, I do not like this!
 Not one little bit!”
-
 But she went anyway,
 She ran down the hall.
 With Thing One, hand in hand,
 They went to play dolls!
 Hand in hand they went
 To play dolls down the hall.
-
 And left in the room
 Was the fish and the cat.
 The fish with the cat,
@@ -330,7 +329,6 @@ The fish was afraid
 Of the Cat in the Hat.
 He looked like a cat
 But he smelled like a rat!
-
 The cat said to the fish
 With a gleam in his eyes.
 “You know, we cats eat fish
@@ -339,7 +337,6 @@ The fish shook with fear
 As she attempted to run
 But it’s not just Thing Ones
 That want to have fun.
-
 The cat won in the end,
 The fish was no more.
 “Well she didn’t put up much of a fight
@@ -348,7 +345,6 @@ Then who should come back
 But the girl and Thing One?
 And the Cat in the Hat asked
 “Did you two have fun?”
-
 “We did” said Thing One
 “But now she’s dried out
 She’s no fun anymore”
@@ -357,7 +353,6 @@ Said Thing One with a pout.
 Said the Cat
 “Now you’ll take her place”
 Said the Cat in the Hat
-
 “We’ll go house to house
 All over the world
 Taking the life force
@@ -370,7 +365,6 @@ The best time to drain them
 Is when their having fun
 Then they’ll all be replaced
 With Thing Twos and Thing Ones”
-
 “Now take her outside”
 Said the cat to Thing One
 “Soon she’ll be nothing,
@@ -379,12 +373,10 @@ Then come back inside,
 There’s work to be done
 We’ve so much to do
 We’ve only begun.”
-
 Thing One went outside,
 The girl trailing behind
 Lifeless and slow
 Not a thought in her mind.
-
 Then the cat said “What fun
 So much fun to be done
 When the world is made up of
@@ -393,7 +385,6 @@ No more boring kids
 Just moping about
 For my Things will find fun
 Of this I’ve no doubt”
-
 Thing One came back in
 In the clothes of the girl
 “Are you ready to take her,
@@ -402,7 +393,6 @@ The new girl gave a nod
 And the Cat said, “Then that’s that.”
 And then he was gone
 With a tip of his hat.
-
 So, she sat in the chair
 All alone, by herself.
 As she watched the paint dry
@@ -412,4 +402,4 @@ She said “What did you do?”
 Well, what would YOU do
 If your mother asked YOU?"""
 H ="the"
-
+I = "to"
